@@ -148,17 +148,6 @@ std::wstring getOpenglDriverStore() {
     return {};
 }
 
-bool compareStringCaseInsensitive(const std::wstring &a,
-                                  const std::wstring &b) {
-    const size_t sz = a.size();
-    if (b.size() != sz)
-        return false;
-    for (unsigned int i = 0; i < sz; ++i)
-        if (tolower(a[i]) != tolower(b[i]))
-            return false;
-    return true;
-}
-
 int main() {
     std::wstring actualStore = getOpenglDriverStore();
     if (actualStore.empty()) {
