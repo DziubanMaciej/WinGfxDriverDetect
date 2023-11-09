@@ -10,6 +10,22 @@
 
 #define FATAL_ERROR(message) { printf("FATAL ERROR: %s\n", message);  throw 1; }
 
+
+struct KnownDriver {
+    const char* vendorName;
+    const char* dllName;
+};
+
+const KnownDriver knownDrivers[] = {
+#if _WIN64
+    { "AMD", "atio6axx.dll"},
+    { "NVIDIA", "nvoglv64.dll"},
+#else
+    { "AMD", "atioglxx.dll"},
+    { "NVIDIA", "nvoglv32.dll"},
+#endif
+};
+
 void initGl()
 {
     // Create window class
@@ -92,18 +108,16 @@ std::wstring getOpenglDriverStore()
         return L"";
     }
 
-#if _WIN64
-    const char* amdDriver = "atio6axx.dll";
-#else
-    const char* amdDriver = "atioglxx.dll";
-#endif
-
     for (DWORD i = 0u; i < modulesCount; i++)
     {
         TCHAR moduleName[MAX_PATH];
-        if (GetModuleFileNameEx(process, modules[i], moduleName, MAX_PATH))
+        if (GetModuleFileNameEx(process, modules[i], moduleName, MAX_PATH) == 0)
         {
-            char* ptr = strstr(moduleName, amdDriver);
+            return L"";
+        }
+
+        for (const KnownDriver &knownDriver : knownDrivers) {
+            char* ptr = strstr(moduleName, knownDriver.dllName);
             if (ptr != nullptr)
             {
                 size_t moduleDirLength = (ptr - moduleName) - 1; // -1 for trailing backslash
