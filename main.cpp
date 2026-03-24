@@ -141,6 +141,30 @@ void printNotFoundDriverHint(const std::vector<Module> &modulesBefore, const std
     }
 }
 
+static std::string getSupportedApiNames() {
+    std::string names;
+    auto append = [&](const char* name) {
+        if (!names.empty()) names += ", ";
+        names += name;
+    };
+#if SUPPORT_OPENGL
+    append("OpenGL");
+#endif
+#if SUPPORT_OPENCL
+    append("OpenCL");
+#endif
+#if SUPPORT_VULKAN
+    append("Vulkan");
+#endif
+#if SUPPORT_DX11
+    append("Dx11");
+#endif
+#if SUPPORT_DX12
+    append("Dx12");
+#endif
+    return names;
+}
+
 int main(int argc, char **argv) {
     int res = EXIT_SUCCESS;
     Api api = Api::Vulkan;
@@ -179,7 +203,7 @@ int main(int argc, char **argv) {
         }
         else
         {
-            REPORT_ERROR() << "Invalid API. Specify OpenGL, OpenCL, Vulkan, Dx11 or Dx12.\n";
+            REPORT_ERROR() << "Invalid API. Specify one of: " << getSupportedApiNames() << "\n";
             res = EXIT_FAILURE;
         }
     }
