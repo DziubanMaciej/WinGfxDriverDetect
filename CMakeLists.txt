@@ -1,9 +1,15 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(GetDriverStore)
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+	set(SUPPORT_VULKAN_DEFAULT OFF) # Vulkan SDK does not ship 32bit binaries anymore
+else()
+	set(SUPPORT_VULKAN_DEFAULT ON)
+endif()
+
 option(SUPPORT_OPENGL "Enable OpenGL support" ON)
 option(SUPPORT_OPENCL "Enable OpenCL support" ON)
-option(SUPPORT_VULKAN "Enable Vulkan support" ON)
+option(SUPPORT_VULKAN "Enable Vulkan support" ${SUPPORT_VULKAN_DEFAULT})
 option(SUPPORT_DX11 "Enable DirectX11 support" ON)
 option(SUPPORT_DX12 "Enable DirectX12 support" ON)
 
